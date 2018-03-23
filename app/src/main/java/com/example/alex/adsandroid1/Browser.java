@@ -16,7 +16,7 @@ public class Browser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
 
-       Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.Pornhub.com"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.y8.com"));
         startActivity(browserIntent);
     }
 }
