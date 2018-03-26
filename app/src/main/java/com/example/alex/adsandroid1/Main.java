@@ -21,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,13 @@ public class Main extends AppCompatActivity {
     SensorManager sensorManager;
     NotificationCompat.Builder mBuilder;
     NotificationManager mNotificManag;
+
+    EditText editText;
+    EditText editText2;
+    Button button;
+    TextView textView;
+
+
 
     //Proximity stuff
     SensorManager mSensorManager;
@@ -43,6 +52,12 @@ public class Main extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        editText = (EditText)findViewById(R.id.websiteTextLeft);
+        editText2 = (EditText) findViewById(R.id.websiteTextRight);
+
+
+
 
         AddNotification();
         SensorMethodGyroscope();
@@ -82,14 +97,19 @@ public class Main extends AppCompatActivity {
 
     public void SensorMethodGyroscope()
     {
+
         //creates sensormanager to get gyroscope
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         // Create a listener
         gyroscopeSensorListener = new SensorEventListener()
+
+
         {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
+                String text = editText.getText().toString();
+                String text2 = editText2.getText().toString();
                 //asks about the z-axe
                 if(sensorEvent.values[2] > 4f) { // anticlockwise
                     //creates vibrator
@@ -97,7 +117,7 @@ public class Main extends AppCompatActivity {
                     //vibrate for 0,5 seconds
                     v.vibrate(500);
                     //Get URL
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.y8.com"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + text));
                     MuteAudio();
                     startActivity(browserIntent);
                     //stop the gyroscope sensor
@@ -109,7 +129,7 @@ public class Main extends AppCompatActivity {
 
                     Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(500);
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + text2));
                     MuteAudio();
                     startActivity(browserIntent);
                     sensorManager.unregisterListener(this);
