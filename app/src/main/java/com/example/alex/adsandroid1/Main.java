@@ -26,13 +26,15 @@ import android.widget.Toast;
 public class Main extends AppCompatActivity {
 
     SensorManager sensorManager;
-<<<<<<< Updated upstream
     NotificationCompat.Builder mBuilder;
     NotificationManager mNotificManag;
 
-=======
+    SensorManager mSensorManager;
+    Sensor mProximity;
+    int SENSOR_SENSITIVITY = 2;
+
     ProxSensor prox;
->>>>>>> Stashed changes
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,25 +43,16 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         AddNotification();
-        SensorMethod();
-        prox = new ProxSensor();
 
-    }
-
-    public void SensorMethod()
-    {
-        //
+        //creates sensormanager to get gyroscope
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-
-
+        final Sensor gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         // Create a listener
         SensorEventListener gyroscopeSensorListener = new SensorEventListener()
         {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                //
+                //asks about the z-axe
                 if(sensorEvent.values[2] > 4f) { // anticlockwise
                     //creates vibrator
                     Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
@@ -82,7 +75,6 @@ public class Main extends AppCompatActivity {
                     sensorManager.unregisterListener(this);
                     CountdownTimer();
 
-
                 }
             }
 
@@ -95,9 +87,49 @@ public class Main extends AppCompatActivity {
         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 
+        //#########################################################################################
+        //#########################################################################################
+        //#########################################################################################
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        // create a listener
+        SensorEventListener proximitySensorListener = new SensorEventListener() {
+            public final void onSensorChanged(SensorEvent event) {
+                // Do something with this sensor data.
+                if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                    if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
+                        //near
+                        sensorManager.unregisterListener(this);
+                        Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //far
+                        // sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // Do something here if sensor accuracy changes.
+            }
+        };
+        // register the listener
+        mSensorManager.registerListener(proximitySensorListener, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+
+    }
+    public void SenseMeth() {
+
     }
 
+    public void SensorMethod()
+    {
 
+
+
+    }
 
     public void CountdownTimer()
     {
@@ -125,9 +157,8 @@ public class Main extends AppCompatActivity {
         mBuilder.setContentTitle("Cinnamon");
         mBuilder.setContentText("App is still running in the background");
 
-
         Intent notificationIntent = new Intent(this, Main.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         mBuilder.setContentIntent(contentIntent);
 
         mNotificManag = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -139,7 +170,6 @@ public class Main extends AppCompatActivity {
     {
         mNotificManag.cancelAll();
         Process.killProcess(android.os.Process.myPid());
-        onDestroy();
         super.onDestroy();
     }
 }
