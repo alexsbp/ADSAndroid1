@@ -26,9 +26,13 @@ import android.widget.Toast;
 public class Main extends AppCompatActivity {
 
     SensorManager sensorManager;
+<<<<<<< Updated upstream
     NotificationCompat.Builder mBuilder;
     NotificationManager mNotificManag;
 
+=======
+    ProxSensor prox;
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class Main extends AppCompatActivity {
 
         AddNotification();
         SensorMethod();
+        prox = new ProxSensor();
 
     }
 
@@ -46,6 +51,8 @@ public class Main extends AppCompatActivity {
         //
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+
 
         // Create a listener
         SensorEventListener gyroscopeSensorListener = new SensorEventListener()
@@ -74,6 +81,8 @@ public class Main extends AppCompatActivity {
                     startActivity(browserIntent);
                     sensorManager.unregisterListener(this);
                     CountdownTimer();
+
+
                 }
             }
 
@@ -85,7 +94,10 @@ public class Main extends AppCompatActivity {
         // Register the listener
         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
+
     }
+
+
 
     public void CountdownTimer()
     {
