@@ -62,11 +62,11 @@ public class Main extends AppCompatActivity {
                         //near
 
                         sensorManager.unregisterListener(gyroscopeSensorListener);
-                        Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
                     } else {
                         //far
                         sensorManager.registerListener(gyroscopeSensorListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                        Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
