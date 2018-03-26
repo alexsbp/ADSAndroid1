@@ -28,8 +28,6 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".Browser" />
-        <activity android:name=".Browser2"></activity>
     </application>
 
 </manifest>
