@@ -11,7 +11,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.CountDownTimer;
+import android.os.Process;
+import android.os.Vibrator;
 import android.provider.Contacts;
+import android.support.constraint.solver.widgets.ConstraintWidget;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ public class Main extends AppCompatActivity {
 
     SensorManager sensorManager;
     NotificationCompat.Builder mBuilder;
+    NotificationManager mNotificManag;
 
 
     @Override
@@ -33,13 +37,13 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         AddNotification();
-
         SensorMethod();
 
     }
 
     public void SensorMethod()
     {
+        //
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
@@ -48,19 +52,26 @@ public class Main extends AppCompatActivity {
         {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if(sensorEvent.values[2] > 3f) { // anticlockwise
-
+                //
+                if(sensorEvent.values[2] > 4f) { // anticlockwise
+                    //creates vibrator
+                    Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+                    //vibrate for 0,5 seconds
+                    v.vibrate(500);
+                    //Get URL
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.y8.com"));
                     startActivity(browserIntent);
-                    //Toast.makeText(Main.this, "Pornhub starting", Toast.LENGTH_SHORT).show();
+                    //stop the gyroscope sensor
                     sensorManager.unregisterListener(this);
+                    //wait for 4 seconds
                     CountdownTimer();
 
-                } else if(sensorEvent.values[2] < -3f) { // clockwise
+                } else if(sensorEvent.values[2] < -4f) { // clockwise
 
+                    Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(500);
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
                     startActivity(browserIntent);
-                    //Toast.makeText(Main.this, "Google starting", Toast.LENGTH_SHORT).show();
                     sensorManager.unregisterListener(this);
                     CountdownTimer();
                 }
@@ -78,7 +89,7 @@ public class Main extends AppCompatActivity {
 
     public void CountdownTimer()
     {
-        CountDownTimer timer2 = new CountDownTimer(3*1000,3*1000) {
+        CountDownTimer timer2 = new CountDownTimer(4*1000,4*1000) {
             @Override
             public void onTick(long l)
             {
@@ -87,7 +98,7 @@ public class Main extends AppCompatActivity {
             @Override
             public void onFinish()
             {
-                Toast.makeText(Main.this, "Timer stopping", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Main.this, "Timer stopping", Toast.LENGTH_SHORT).show();
                 SensorMethod();
             }
         }.start();
@@ -99,15 +110,24 @@ public class Main extends AppCompatActivity {
         //set the output text
         mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_action_name);
-        mBuilder.setContentTitle("Cinnamon App");
-        mBuilder.setContentText("The App: Cinnamon App is still running");
+        mBuilder.setContentTitle("Cinnamon");
+        mBuilder.setContentText("App is still running in the background");
 
 
-        Intent notificationIntent = new Intent(this, Contacts.Intents.UI.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,PendingIntent.FLAG_ONE_SHOT);
+        Intent notificationIntent = new Intent(this, Main.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
 
-        NotificationManager mNotificManag = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificManag = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificManag.notify(0, mBuilder.build());
+
+    }
+
+    protected void DestroyApp (View v)
+    {
+        mNotificManag.cancelAll();
+        Process.killProcess(android.os.Process.myPid());
+        onDestroy();
+        super.onDestroy();
     }
 }
